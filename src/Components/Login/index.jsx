@@ -1,17 +1,15 @@
 import React from 'react'
-import {useUser} from '../../hooks/useUser'
-function Login() {
-  const {login}=useUser()
+function Login({login}) {
 
   const handleLogIn=(e)=>{
     e.preventDefault();
-    login(e.target.email.value,e.target.password.value)
+    login(e.target.username.value,e.target.password.value)
   }
 
   return (
     <form onSubmit={handleLogIn}>
       <div>
-        <input id="email" name="email" type="email" placeholder='email' required={true} />
+        <input id="username" name="username" type="text" placeholder='username' required={true} />
       </div>
 
       <div>
