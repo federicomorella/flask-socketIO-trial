@@ -25,7 +25,8 @@ export function useUser(){
 
             let ws=ws_connect(token)
             setSocket(ws)
-            
+            ws.emit('join',{username:u.username,room:'1234'})
+
             })
           .catch(err=>{
             console.log(err)

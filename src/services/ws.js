@@ -16,6 +16,15 @@ export default function ws_connect(token){
         socket.on('connect', function() {
             socket.emit('my event', {data: 'I\'m connected!'});
         });
+
+        socket.on('room_enter', function(data) {
+            console.log(data)
+        });
+
+        socket.on('room_leave', function(data) {
+            console.log(data)
+        });
+    
     
 
         return socket

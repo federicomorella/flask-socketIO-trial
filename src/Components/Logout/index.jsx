@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Button } from 'react-bootstrap';
 
 function Logout({logout}) {
 
@@ -10,9 +11,11 @@ function Logout({logout}) {
 
   return (
     <>
-      <button onClick={handleLogOut}>
+      <Button 
+        variant='outline-light'
+        onClick={handleLogOut}>
         Log out
-      </button>  
+      </Button>  
     </>
 
   )
