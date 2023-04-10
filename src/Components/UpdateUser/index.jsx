@@ -1,43 +1,48 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import {Form,Button,Modal} from 'react-bootstrap'
 import { useState } from 'react';
+import UserContext from '../../Context/UserContext';
 
-function Login({login}) {
+
+function UpdateUser({updateUser}) {
+  const {user}=useContext(UserContext)
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleLogIn=(e)=>{
+  const handleSave=(e)=>{
     e.preventDefault();
     handleClose()
-    login(e.target.username.value,e.target.password.value)
+    updateUser(e.target.password.value,e.target.email.value)
   }
+  
 
   return (
 
     <>
       
-      <Button variant="outline-light" onClick={handleShow}>
-        Login
+      <Button variant="light" onClick={handleShow}>
+        {user.username}
       </Button>
-
 
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
+          <Modal.Title>Update user information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleLogIn}>
+          <Form onSubmit={handleSave}>
             <Form.Group>
               <Form.Label>User</Form.Label>
               <Form.Control 
-
                 id="username" 
                 name="username" 
                 type="text" 
-                required={true}>        
+                required={true}
+                disabled
+                defaultValue={user.username}
+                >        
               </Form.Control>
             </Form.Group>
             <Form.Group className='mt-2'>
@@ -46,7 +51,19 @@ function Login({login}) {
                 id="password" 
                 name="password" 
                 type="password" 
-                required={true}>        
+                minLength={4}
+                required={true}
+                defaultValue={''}>        
+              </Form.Control>
+            </Form.Group>
+            <Form.Group className='mt-2'>
+              <Form.Label>Email</Form.Label>
+              <Form.Control 
+                id="email" 
+                name="email" 
+                type="email"
+                defaultValue={user.email}
+                >        
               </Form.Control>
             </Form.Group>
             <Form.Group className='mt-2'>
@@ -54,26 +71,15 @@ function Login({login}) {
                 className='offset-4 me-1'
                 variant="outline-dark"
                 type="submit">              
-                Login
+                Save
               </Button>
               <Button 
-                className='me-1'
+                className='me'
                 variant="outline-dark"
                 onClick={handleClose}>              
                 Cancel
               </Button>
             </Form.Group>
-
-                  {/* <div>
-              <input id="username" name="username" type="text" placeholder='username' required={true} />
-            </div> 
-
-            <div>
-              <input id="password" name="password" type="password" placeholder='password' required={true}/>
-            </div>
-
-            <button type="submit">Log in</button>
-          </form>    */}
           </Form>
         </Modal.Body>
       </Modal>
@@ -82,4 +88,4 @@ function Login({login}) {
   )
 }
 
-export default Login
+export default UpdateUser

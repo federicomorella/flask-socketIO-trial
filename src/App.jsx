@@ -1,28 +1,36 @@
 import { useState } from 'react'
 import Login from './Components/Login'
 import Logout from './Components/Logout'
+import Register from './Components/Register'
+import UpdateUser from './Components/UpdateUser'
 import { useUser } from './hooks/useUser'
 // import './App.css'
 import { WSTest } from './Components/WSTest'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Navbar,Button,Container,Nav} from 'react-bootstrap'
+import {Navbar,Button,Container,Nav,Stack} from 'react-bootstrap'
 
 
 function App() {
 
-  const {user,socket,login,logout}=useUser()
-
+  const {user,socket,login,logout,register,updateUser}=useUser()
+  console.log('app:',user)
   return (
     <Container bg="dark" fluid className="App">
-      <Navbar fluid bg="warning" expand="lg">
-        <Container fluid>
-          <Navbar.Brand href="#">SocketIO-Test</Navbar.Brand>
+      <Navbar fluid bg="warning" expand="lg">        
+        <Navbar.Brand className='ms-3' href="#">
+            SocketIO-Test
+        </Navbar.Brand>
+        <Stack direction='horizontal' className="ms-auto" gap="1">
           {user && user.accessToken?
-            <Logout logout={logout}></Logout>:
-            <Login login={login}></Login>}
-
-
-        </Container>
+            <>
+              <UpdateUser updateUser={updateUser}/>
+              <Logout logout={logout}/>
+            </>:
+            <>
+              <Register register={register}/>
+              <Login login={login}/>
+            </>}
+        </Stack>
       </Navbar >
     
 

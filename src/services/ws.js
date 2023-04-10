@@ -1,14 +1,21 @@
 import { WS_URL } from "./config"
 
+let socket=null
 
 export default function ws_connect(token){
+    //if socket already exists return
+    if(socket)
+        return socket
+
     console.log('Connecting websocket...')
     try{
-        let socket = io(WS_URL,
+        socket = io(WS_URL,
             {
                 auth: {
                     token:token
-                }
+                },
+                transports:['websocket','polling'],
+                reconnectionDelayMax: 5000
             });
         console.log('websocket connected...')
 
@@ -24,7 +31,12 @@ export default function ws_connect(token){
         socket.on('room_leave', function(data) {
             console.log(data)
         });
-    
+
+        socket.on('server_message', function(data) {
+            console.log('server message received: ',data)
+            alert(`Message received from  ${data.user}`)
+        });
+  
     
 
         return socket

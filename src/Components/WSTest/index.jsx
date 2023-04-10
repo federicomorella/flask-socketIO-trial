@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import UserContext from '../../Context/UserContext'
 
 export function WSTest({socket}){
+
+    const {user,setUser}=useContext(UserContext)
+
     const sendMessage=()=>{
-        console.log('send MyMessage')
-        socket.emit("MyMessage",{pp:'hola'})
+        console.log('sent MyMessage from ' + user.username)
+        socket.emit("MyMessage",{pp:'hola',user:user.username})
     }
-    console.log(socket)
+    
     return (
         <div>
             <h2>This is my SocketIO test app</h2>
