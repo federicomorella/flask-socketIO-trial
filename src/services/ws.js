@@ -1,4 +1,4 @@
-import { WS_URL } from "./config"
+import { WS_URL } from "../../config"
 
 let socket=null
 

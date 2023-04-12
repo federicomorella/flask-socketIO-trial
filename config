@@ -1,0 +1,2 @@
+export const WS_URL='https://flask-socketio.onrender.com'//"ws://localhost:5000"
+export const API_URL='https://flask-socketio.onrender.com/v1'//"http://localhost:5000/v1"

@@ -4,9 +4,8 @@ It is used to connect
 
 
 ### Configuration
-You should set __WS_URL__ and __API_URL__ in [/src/servicer/config](/src/services/config) 
+You should set __WS_URL__ and __API_URL__ in [config](config) 
 
-For developement server, configure vite proxy server to point to API host in [vite.config.js](vite.config.js)
 
 This app is related to [this](https://github.com/federicomorella/flask-socketIO-trial-api) API repository.
 

@@ -1,4 +1,4 @@
-import {API_URL} from "./config"
+import {API_URL} from "../../config"
 /**************************************************************************************
  * Log in user and gets access token
  * @param {*} username 
