@@ -7,12 +7,12 @@ import { useUser } from './hooks/useUser'
 // import './App.css'
 import { WSTest } from './Components/WSTest'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Navbar,Button,Container,Nav,Stack} from 'react-bootstrap'
+import {Navbar,Button,Container,Nav,Stack,Spinner} from 'react-bootstrap'
 import {Link,Route, useLocation} from 'wouter'
 
 function App() {
 
-  const {user,socket,login,logout,register,updateUser}=useUser()
+  const {user,socket,login,logout,register,updateUser,loading}=useUser()
   const [location,setLocation]=useLocation()
   useEffect(()=>{
     if(user?.username)
@@ -44,15 +44,16 @@ function App() {
       </Navbar >
     
 
-      {/* {user && user.accessToken?<WSTest socket={socket}/>:<></>} */}
+      
+  
 
       <Route path="/">Welcome to my SocketIO sample project</Route>
-      <Route path="/user/:name">{(params) => <div>Hello, {params.name}!</div>}</Route>
       <Route path="/app">
         <WSTest socket={socket}/>
       </Route>
    
-
+      {loading?<div><Spinner animation="border" variant="primary" size="sm" className='offset-5'/></div>:null}
+      
     </Container>
   )
 }

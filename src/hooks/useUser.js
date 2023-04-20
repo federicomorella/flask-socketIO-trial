@@ -7,6 +7,7 @@ export function useUser(){
 
     const {user,setUser}=useContext(UserContext)
     const [socket,setSocket]=useState(null)
+    const [loading,setLoading]=useState(false)
 
     /**************************************************************************************
      * verify if there is an existing access token in localStorage
@@ -16,20 +17,7 @@ export function useUser(){
         let token=localStorage.getItem('access_token')
         if(token){ //if there is a previos token then gets user info
           console.log('access_token found in localStorage\nGetting user info...')
-          getUserInfoService(token)
-          .then(u=>{
-            console.log('user:',u)
-              if(u && u.username){
-                setUser({...user,...u,accessToken:token})
-                let ws=ws_connect(token)
-                setSocket(ws)
-                ws.emit('join',{username:u.username,room:'1234'})
-              }
-            })
-          .catch(err=>{
-            console.log(err)
-            logout()
-          })
+          getUserInfo(token)
           }
       } 
       ,
@@ -43,27 +31,31 @@ export function useUser(){
      * @param {String} username
      * @param {String} password
      */
-    const userLogin=useCallback((username,password)=>{
-        console.log(username,password)
-        loginService(username,password)
-        .then(token => {
-            if (!token) throw new Error('Failed to log in')
-            console.log('logged in: ')
-            
-            // Connected to server
-            setUser({...user,username:username, accessToken:token})
-            localStorage.setItem('access_token',token)
+    const userLogin=useCallback(async (username,password)=>{
+      console.log(username,password)
+      try{
+        let token=await loginService(username,password)
 
-            // Connect to SocketIO server
-            let ws=ws_connect(token)
-            setSocket(ws)
-            ws.emit('join',{username:username,room:'1234'})
-        })
-        .catch(err=>{
-            alert('user or password incorrect')
-            setUser({...user,username:'', accessToken:null})
-            console.log('failed to login: ',err)
-        })
+        if (!token) throw new Error('Failed to log in')
+
+        console.log('logged in: ')
+        
+        //Get user info
+        await getUserInfo(token)
+        localStorage.setItem('access_token',token)
+
+        // Connect to SocketIO server
+        let ws=ws_connect(token)
+        setSocket(ws)
+        ws.emit('join',{username:username,room:'1234'})
+        
+      }
+      catch(err){
+        alert('user or password incorrect')
+        setUser({...user,username:'', accessToken:null})
+        console.log('failed to login: ',err)
+      }
+        
     },
     [user,socket]
     )
@@ -77,6 +69,7 @@ export function useUser(){
      */
         const userRegister=useCallback((username,password,email)=>{
           console.log('Register new user: '+username)
+          setLoading(true)
           registerService(username,password,email)
           .then(res => {
               if (!res) throw new Error('Failed to register')
@@ -88,6 +81,7 @@ export function useUser(){
           .catch(err=>{
               console.log('failed to crea new user')
           })
+          setLoading(false)
       },
       []
       )
@@ -97,8 +91,9 @@ export function useUser(){
      * @param {String} password
      * @param {String} email
      */
-          const userUpdate=useCallback((password,email)=>{
+          const userUpdate=useCallback(async (password,email)=>{
             console.log('Updating user data:' ,user.username)
+            setLoading(true)
             updateService(user.accessToken,user.username,password,email)
             .then(res => {
                 console.log(res)
@@ -109,6 +104,7 @@ export function useUser(){
             .catch(err=>{
                 console.log(err)
             })
+            setLoading(false)
         },
         [user]
         )
@@ -117,18 +113,20 @@ export function useUser(){
      * Gets current user information and stores it in user
      * If fails to get user information then logout user
      */
-    const getUserInfo=useCallback(()=>{
-      try{
-        let u=getUserInfoService(user.accessToken)
+    const getUserInfo=useCallback(async (accessToken)=>{
+      setLoading(true)
+      try{        
+        let u=await getUserInfoService(accessToken)
         console.log('user data:',u)
-        if(u && u.username){
-          setUser(...user,...u)
+        if(u?.username){
+          setUser({...user,...u,accessToken})
         }
       }
       catch(err){
         console.log(err)
         userLogout()//if failed to get user info then logout user
       }
+      setLoading(false)
     },
     [user])
 
@@ -153,7 +151,8 @@ export function useUser(){
         logout: userLogout,
         updateUser: userUpdate,
         socket:socket,
-        user: user
+        user: user,
+        loading:loading
       }
       
     )

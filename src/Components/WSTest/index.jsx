@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import UserContext from '../../Context/UserContext'
+import Contacts from '../Contacts'
 
 export function WSTest({socket}){
 
@@ -14,6 +15,7 @@ export function WSTest({socket}){
         <div>
             <h2>This is my SocketIO test app</h2>
             <button onClick={sendMessage}>Send message </button>
+            <Contacts/>
         </div>
     )
 }
