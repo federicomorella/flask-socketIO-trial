@@ -6,7 +6,7 @@ import ws_connect from '../services/ws';
 export function useUser(){
 
     const {user,setUser}=useContext(UserContext)
-    const [socket,setSocket]=useState(null)
+    // const [socket,setSocket]=useState(null)
     const [loading,setLoading]=useState(false)
 
     /**************************************************************************************
@@ -16,8 +16,19 @@ export function useUser(){
     useEffect(()=>{  
         let token=localStorage.getItem('access_token')
         if(token){ //if there is a previos token then gets user info
-          console.log('access_token found in localStorage\nGetting user info...')
+          console.log('access_token found in localStorage')
+          let socket=socket_connect(token)
           getUserInfo(token)
+          .then(user_data=>{
+            setUser({...user,...user_data,accessToken:token,socket})
+            console.log('User logged in')
+
+            //join room
+            socket.emit('join',{username:user_data?.username,room:'1234'})
+          })
+          .catch(err=>console.log('Failed to log in'))
+
+
           }
       } 
       ,
@@ -41,14 +52,18 @@ export function useUser(){
         console.log('logged in: ')
         
         //Get user info
-        await getUserInfo(token)
+        let user_data= await getUserInfo(token)
         localStorage.setItem('access_token',token)
+        console.log('user_data:',user_data)
 
         // Connect to SocketIO server
-        let ws=ws_connect(token)
-        setSocket(ws)
-        ws.emit('join',{username:username,room:'1234'})
+        let socket=socket_connect(token)
         
+        //join room
+        socket.emit('join',{username:user_data?.username,room:'1234'})
+
+        setUser({...user,...user_data,accessToken:token,socket})  
+        console.log('User logged in :')      
       }
       catch(err){
         alert('user or password incorrect')
@@ -57,7 +72,7 @@ export function useUser(){
       }
         
     },
-    [user,socket]
+    [user]
     )
 
 
@@ -110,23 +125,24 @@ export function useUser(){
         )
 
     /**************************************************************************************
-     * Gets current user information and stores it in user
-     * If fails to get user information then logout user
+     * Gets current user information
+     * If fails then logout user and return null
+     * @returns user = {username,email,...}
      */
     const getUserInfo=useCallback(async (accessToken)=>{
       setLoading(true)
       try{        
-        let u=await getUserInfoService(accessToken)
-        console.log('user data:',u)
-        if(u?.username){
-          setUser({...user,...u,accessToken})
-        }
+        let user_data=await getUserInfoService(accessToken)
+        console.log('user data:',user_data)
+        setLoading(false)
+        return user_data
       }
       catch(err){
+        setLoading(false)
         console.log(err)
         userLogout()//if failed to get user info then logout user
       }
-      setLoading(false)
+      
     },
     [user])
 
@@ -138,10 +154,34 @@ export function useUser(){
      */
     const userLogout=useCallback(()=>{
       console.log('log out')
-      setUser({...user,username:'',accessToken:null})
+
+      console.log('Disconnecting ws')
+      if(user?.socket)
+        user.socket.disconnect()  
+
+      setUser({...user,username:'',accessToken:null,socket:null,contacts:[],rooms:[]})
       localStorage.setItem('access_token','')
     },
     [user])
+
+    /**************************************************************************************
+     * Connect to ws and save the socket to the userContext
+     * @returns socket or null
+     */
+    const socket_connect=useCallback((token)=>{
+      console.log('Creating ws connection')
+      let socket=ws_connect(token)
+      
+      if(socket){
+        //actualiza socket en el userContext
+        return socket
+      }
+      else
+        userLogout() 
+        return null     
+    },
+    [user])
+
 
 
     return (
@@ -150,7 +190,7 @@ export function useUser(){
         register:userRegister,
         logout: userLogout,
         updateUser: userUpdate,
-        socket:socket,
+        // socket:socket,
         user: user,
         loading:loading
       }

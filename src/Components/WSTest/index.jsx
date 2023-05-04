@@ -8,7 +8,8 @@ export function WSTest({socket}){
 
     const sendMessage=()=>{
         console.log('sent MyMessage from ' + user.username)
-        socket.emit("MyMessage",{pp:'hola',user:user.username})
+        if(user?.socket)
+            user.socket.emit("MyMessage",{pp:'hola',user:user.username})
     }
     
     return (

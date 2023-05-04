@@ -6,6 +6,7 @@ import { API_URL } from './config'
 export default defineConfig({
   plugins: [react()],
   server:{
+    host:'0.0.0.0',
     port:3000,
     proxy: {
       '/v1/': {

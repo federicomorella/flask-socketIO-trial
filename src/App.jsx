@@ -12,13 +12,13 @@ import {Link,Route, useLocation} from 'wouter'
 
 function App() {
 
-  const {user,socket,login,logout,register,updateUser,loading}=useUser()
+  const {user,login,logout,register,updateUser,loading}=useUser()
   const [location,setLocation]=useLocation()
   useEffect(()=>{
     if(user?.username)
-      setLocation('/app',{socket:socket})
+      setLocation('/app')
     else
-      setLocation('/',{socket:socket})
+      setLocation('/')
 
   },[user]
   )
@@ -49,7 +49,7 @@ function App() {
 
       <Route path="/">Welcome to my SocketIO sample project</Route>
       <Route path="/app">
-        <WSTest socket={socket}/>
+        <WSTest/>
       </Route>
    
       {loading?<div><Spinner animation="border" variant="primary" size="sm" className='offset-5'/></div>:null}

@@ -7,7 +7,7 @@ import {API_URL} from "../../config"
  */
 export function removeContactService(username,accessToken){
     console.log('delete contact: ',username, ' token: ', accessToken)
-    return fetch(`${API_URL}/user/contact`,{
+    return fetch(`${API_URL}/user/contacts`,{
         method:'DELETE',
         headers: getHeaders(accessToken),
         body: JSON.stringify({username:username})
@@ -30,7 +30,7 @@ export function removeContactService(username,accessToken){
  */
 export function addContactService(contactUserName,accessToken){
     console.log('Add contact: ',contactUserName, ' token: ', accessToken)
-    return fetch(`${API_URL}/user/contact`,{
+    return fetch(`${API_URL}/user/contacts`,{
         method:'POST',
         headers: getHeaders(accessToken),
         body: JSON.stringify({username:contactUserName})

@@ -1,10 +1,12 @@
 import { WS_URL } from "../../config"
 
 let socket=null
-
+/***
+ * create websocket, connect and return the created socket
+ */
 export default function ws_connect(token){
     //if socket already exists return
-    if(socket)
+    if(socket?.connected)
         return socket
 
     console.log('Connecting websocket...')
