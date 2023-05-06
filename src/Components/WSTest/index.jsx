@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import UserContext from '../../Context/UserContext'
 import Contacts from '../Contacts'
-
+import Rooms from '../Rooms/Rooms'
 export function WSTest({socket}){
 
     const {user,setUser}=useContext(UserContext)
@@ -17,6 +17,9 @@ export function WSTest({socket}){
             <h2>This is my SocketIO test app</h2>
             <button onClick={sendMessage}>Send message </button>
             <Contacts/>
+            <Rooms 
+                rooms={user.rooms} 
+                onRoomSelect={(roomId)=>user.socket.emit('MyMessage',{user:user.username,room:roomId})}></Rooms>
         </div>
     )
 }

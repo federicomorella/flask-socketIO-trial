@@ -1,0 +1,25 @@
+.rooms-container{
+    display: block;
+    width: 30%;
+    margin-left: 0;
+    gap: 0;
+
+}
+
+
+.rooms-list{
+    width: 100%;
+    height: auto;
+    overflow-x: scroll;
+    border-style: outset;
+}
+
+.room-item{
+    width: 100%;
+}
+
+.room-select-btn{
+    width: 100%;
+    height: 100%;
+    margin: 0,0,0,0
+}

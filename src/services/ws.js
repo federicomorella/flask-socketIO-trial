@@ -36,7 +36,7 @@ export default function ws_connect(token){
 
         socket.on('server_message', function(data) {
             console.log('server message received: ',data)
-            alert(`Message received from  ${data.user}`)
+            alert(`Message received from  ${data.user} to room ${data.room}`)
         });
   
     
